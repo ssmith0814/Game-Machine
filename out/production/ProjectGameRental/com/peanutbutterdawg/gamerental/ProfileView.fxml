@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <AnchorPane fx:id="profileView" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #003366;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.peanutbutterdawg.gamerental.ProfileViewController">
    <children>
       <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="81.0" prefWidth="800.0" style="-fx-background-color: #003366;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -113,7 +104,7 @@
                   <Hyperlink fx:id="helpLink" layoutX="25.0" layoutY="467.0" onAction="#setHelpLink" text="Need Help?" underline="true" />
                   <Button fx:id="showPassBtn" layoutX="455.0" layoutY="360.0" mnemonicParsing="false" onAction="#showPassword" style="-fx-background-color: #00264d; -fx-border-color: #003366;" text="Show Password" textFill="WHITE" />
                   <Button fx:id="hidePassBtn" layoutX="455.0" layoutY="360.0" mnemonicParsing="false" onAction="#hidePassword" prefHeight="33.0" prefWidth="134.0" style="-fx-background-color: #00264d; -fx-border-color: #003366;" text="Hide Password" textFill="WHITE" />
-                  <Label fx:id="ccardError" layoutX="468.0" layoutY="21.0" prefHeight="21.0" prefWidth="242.0" text="Please enter info into all fields" textFill="RED" />
+                  <Label fx:id="cardError" layoutX="468.0" layoutY="21.0" prefHeight="21.0" prefWidth="242.0" text="Please enter info into all fields" textFill="RED" />
                </children>
             </AnchorPane>
          </children>

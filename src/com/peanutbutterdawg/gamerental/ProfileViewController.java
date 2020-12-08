@@ -1,14 +1,5 @@
 package com.peanutbutterdawg.gamerental;
 
-import java.io.IOException;
-import java.net.URL;
-import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.ResourceBundle;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,11 +18,16 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.ResourceBundle;
 
 public class ProfileViewController implements Initializable {
-
-  private static final String JDBC_DRIVER = "org.h2.Driver"; // path to h2 driver
-  private static final String DB_URL = "jdbc:h2:./res/H2"; // Database url
 
   private ObservableList<Profile> profile;
 
@@ -64,7 +60,7 @@ public class ProfileViewController implements Initializable {
   @FXML private TextField userPassWord;
   @FXML private Button showPassBtn;
   @FXML private Button hidePassBtn;
-  @FXML private Label ccardError;
+  @FXML private Label cardError;
 
   @FXML private Button admin;
 
@@ -80,67 +76,62 @@ public class ProfileViewController implements Initializable {
     checkForAdmin();
   }
 
-  //extracted database connection out of multiple methods
   private ResultSet getResultSet(String sql) throws ClassNotFoundException, SQLException {
-    Class.forName(JDBC_DRIVER);
-    Connection conn = DriverManager.getConnection(DB_URL);
+    Class.forName("org.h2.Driver");
+    Connection conn = DriverManager.getConnection("jdbc:h2:./res/H2");
     Statement stmt = conn.createStatement();
     return stmt.executeQuery(sql);
   }
 
-  //extracted database connection out of multiple methods
   private PreparedStatement getPreparedStatement(String sql) throws ClassNotFoundException, SQLException {
-    Class.forName(JDBC_DRIVER);
-    Connection conn = DriverManager.getConnection(DB_URL);
+    Class.forName("org.h2.Driver");
+    Connection conn = DriverManager.getConnection("jdbc:h2:./res/H2");
     return conn.prepareStatement(sql);
   }
 
-  //Switches the view to admin tab
+  //Transfer to Admin Tab
+  @FXML
+  private void setScene(String parent, ActionEvent event) throws IOException {
+    Parent viewParent = FXMLLoader.load(getClass().getResource(parent));
+    Scene scene = new Scene(viewParent);
+
+    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+    window.setScene(scene);
+    window.show();
+  }
+
   @FXML
   void getAdmin(ActionEvent event) throws IOException {
-    Parent AdminViewParent = FXMLLoader.load(getClass().getResource("AdminView.fxml"));
-    Scene AdminViewScene = new Scene(AdminViewParent);
-    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-    window.setScene(AdminViewScene);
-    window.show();
+    setScene("AdminView.fxml", event);
   }
-  //Switches the view to home tab
+
   @FXML
   void getHome(ActionEvent event) throws IOException {
-    Parent HomeViewParent = FXMLLoader.load(getClass().getResource("HomeView.fxml"));
-    Scene HomeViewScene = new Scene(HomeViewParent);
-    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-    window.setScene(HomeViewScene);
-    window.show();
+    setScene("HomeView.fxml", event);
   }
 
-  //Switches the view to library tab
   @FXML
   void getLibrary(ActionEvent event) throws IOException {
-    Parent LibraryViewParent = FXMLLoader.load(getClass().getResource("LibraryView.fxml"));
-    Scene LibraryViewScene = new Scene(LibraryViewParent);
-    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-    window.setScene(LibraryViewScene);
-    window.show();
+    setScene("LibraryView.fxml", event);
   }
 
-  //Switches the view to login tab
   @FXML
-  public void getLogout(ActionEvent event) throws IOException {
-    Parent LoginViewParent = FXMLLoader.load(getClass().getResource("LoginView.fxml"));
-    Scene LoginViewScene = new Scene(LoginViewParent);
-    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+  void getProfile(ActionEvent event) throws IOException {
+    setScene("ProfileView.fxml", event);
+  }
 
-    window.setScene(LoginViewScene);
-    window.show();
+  @FXML
+  void getLogout(ActionEvent event) throws IOException {
+    setScene("LoginView.fxml", event);
+
+    String getUserName = "SELECT USERNAME FROM USER WHERE ISACTIVEUSER = TRUE";
+    String setActiveToFalse = "UPDATE USER SET ISACTIVEUSER = FALSE WHERE USERNAME = ?";
 
     try {
-      ResultSet rs = getResultSet("SELECT USERNAME FROM USER WHERE ISACTIVEUSER = TRUE");
+      ResultSet rs = getResultSet(getUserName);
 
-      PreparedStatement ps = getPreparedStatement("UPDATE USER SET ISACTIVEUSER = FALSE WHERE USERNAME = ?");
+      PreparedStatement ps = getPreparedStatement(setActiveToFalse);
 
       while (rs.next()) {
         String username = rs.getString("USERNAME");
@@ -151,16 +142,6 @@ public class ProfileViewController implements Initializable {
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
-  }
-
-  @FXML
-  void getProfile(ActionEvent event) throws IOException {
-    Parent ProfileViewParent = FXMLLoader.load(getClass().getResource("ProfileView.fxml"));
-    Scene ProfileViewScene = new Scene(ProfileViewParent);
-    Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-    window.setScene(ProfileViewScene);
-    window.show();
   }
 
   private void intitalizeProfile() throws SQLException, ClassNotFoundException {
@@ -178,11 +159,12 @@ public class ProfileViewController implements Initializable {
     cCardInfo2.setVisible(false);
     cCardInfo3.setVisible(false);
     subLabel.setVisible(false);
-    ccardError.setVisible(false);
+    cardError.setVisible(false);
   }
 
   // made method that shows a month from the current date
   private void displaySubEnd() {
+
     Date currentDate = new Date();
     DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
     Calendar tempEnd = Calendar.getInstance();
@@ -210,7 +192,7 @@ public class ProfileViewController implements Initializable {
     }
   }
 
-  // Get current user's username from Database
+  // Get username from Database
   private void getUserName() {
     profile = FXCollections.observableArrayList();
     try {
@@ -292,7 +274,7 @@ public class ProfileViewController implements Initializable {
 
       if (ccard1.isEmpty() | ccard2.isEmpty() | ccard3.isEmpty()) {
         System.out.println("Please enter card information");
-        ccardError.setVisible(true);
+        cardError.setVisible(true);
         return;
       }
 
@@ -309,7 +291,7 @@ public class ProfileViewController implements Initializable {
     cCardInfo1.clear();
     cCardInfo2.clear();
     cCardInfo3.clear();
-    ccardError.setVisible(false);
+    cardError.setVisible(false);
   }
 
   // On action to cancel sub
@@ -348,8 +330,9 @@ public class ProfileViewController implements Initializable {
     ResultSet rs = getResultSet("SELECT PASSWORD FROM USER WHERE ISACTIVEUSER = TRUE");
     try {
       while (rs.next()) {
+        String password = rs.getString("PASSWORD");
 
-        userPassWord.setText(rs.getString("PASSWORD"));
+        userPassWord.setText(password);
         userPassWord.setVisible(false);
       }
 
@@ -371,7 +354,7 @@ public class ProfileViewController implements Initializable {
     hidePassBtn.setVisible(false);
     showPassBtn.setVisible(true);
   }
-//Checks if the current user has Admin rights.
+
   @FXML
   private void checkForAdmin() {
     try {
